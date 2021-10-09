@@ -1,0 +1,13 @@
+name = "MissingsAsFalse"
+uuid = "bd3c0b08-7cce-4d14-b276-b0e6d20a7f61"
+authors = ["Peter Deffebach <p.deffebach@gmail.com> and contributors"]
+version = "0.1.0"
+
+[compat]
+julia = "1"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
