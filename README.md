@@ -1,65 +1,36 @@
-# MissingsMacros
+# MissingsAsFalse.jl
 
-Julia macros to make control flow with `missing` values easier. 
+[![Coveralls](https://coveralls.io/repos/github/pdeffebach/MissingsAsFalse.jl/badge.svg?branch=master)](https://coveralls.io/github/pdeffebach/MissingsAsFalse.jl?branch=master)
+[![CI Testing](https://github.com/pdeffebach/MissingsAsFalse.jl/workflows/CI/badge.svg)](https://github.com/pdeffebach/MissingsAsFalse.jl/actions?query=workflow%3ACI+branch%3Amaster)
+[![](https://img.shields.io/badge/docs-stable-blue.svg)](https://pdeffebach.github.io/MissingsAsFalse.jl/stable)
+[![](https://img.shields.io/badge/docs-dev-blue.svg)](https://pdeffebach.github.io/MissingsAsFalse.jl/dev)
 
-    mfalse(e)
 
-Recursively walks through an expression and transforms
-`missing` values to `false` in select operations.
+A Julia package to treat `missing` values as `false` in certain circumstances.
 
-Checks for equality, `==`, return `false` in the
-presence of `missing`s. `missing == 1` returns
-`missing` without the `@mfalse` macro.
+# Installation
 
-Broadcasted checks for equality. `.==` will
-return `false` when encountering `missing`s.
+MissingsAsFalse.jl is a registered Julia package. Run either of the following to 
+install:
 
-`missing` values in `if` or `elseif` conditions
-are set to `false`. This also applies to ternary
-operations such as `missing == 1 ? 1 : 2`. Without
-`@mfalse`, `if-else` conditions error on missing values.
-
-`missing` acts as false in `&&` and `||` control-flow
-blocks, which error without `@mfalse`.
-
-In literal indexing operations, i.e. `y[x]`, if
-`x` is `<:AbstractVector{Union{Missing, Bool}}`
-`missing` values are set to `false` and such indexes
-are not returned. Without `@mfalse` such
-operations error.
-
-## Examples
-
+```julia
+julia> import Pkg; Pkg.add("MissingsAsFalse")
 ```
-julia> x = missing;
 
-julia> @mfalse x == 1
-false
+or via the `Pkg` REPL mode (enter by typing `]` at the REPL console)
 
-julia> x = [1, missing]; y = [1, 200];
-
-julia> @mfalse x .== y
-2-element BitVector:
- 1
- 0
-
-julia> @mfalse if x
-           100
-       else
-           200
-       end
-200
-
-julia> @mfalse (missing && true)
-false
-
-julia> @mfalse (missing || true)
-true
-
-julia> x = [true, missing, true]; y = [500, 600, 700];
-
-julia> @mfalse y[x]
-2-element Vector{Int64}:
- 500
- 700
+```julia
+] add MissingsAsFalse
 ```
+
+# Documentation
+
+* [Stable](https://pdeffebach.github.io/MissingsAsFalse.jl/stable)
+* [Development](https://pdeffebach.github.io/MissingsAsFalse.jl/dev)
+
+# Package Mainenance
+
+Pull requests are welcome. Pull requests should include updated tests. If
+functionality is changed, docstrings should be added or updated. Generally,
+follow the guidelines in
+[DataFrames](https://github.com/JuliaData/DataFrames.jl/blob/master/CONTRIBUTING.md).
