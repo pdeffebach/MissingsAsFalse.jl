@@ -39,6 +39,12 @@ are not returned. Without `@mfalse` such
 operations error. Note: `@mfalse` only applies when `x` is
 `<:AbstractArray{Union{Missing, Bool}}`.
 
+!!! warning
+    For array operaions, including braodcasted comparisons (like `.==`)
+    and boolean indexing `y[x]` where x is a boolean array with missing
+    values, `@mfalse` will allocate a new array without missing values.
+    This will allocate memory and may cause noticeable slow-downs.
+
 ## Examples
 
 ```
