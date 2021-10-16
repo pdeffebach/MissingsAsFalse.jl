@@ -1,4 +1,4 @@
-module MissingsMacros
+module MissingsAsFalse
 
 using MacroTools
 
@@ -10,30 +10,35 @@ export @mfalse
 Recursively walks through an expression and transforms
 `missing` values to `false` in select operations.
 
-Checks for equality, `==`, return `false` in the
-presence of `missing`s. `missing == 1` returns
-`missing` without the `@mfalse` macro.
+* Checks for equality: `==`. `@mfalse missing == 1` returns
+`false`. Without `@mfalse`, the expression returns `missing`.
 
-The same applies for `>`, `>=`, `<`, and `<=`.
+* Greater than and less than comparisons: `>`, `>=`, `<`, and
+`<=`. `missing < 1` returns `false`. Without `@mfalse` the
+expression returns `missing`. The same holds for `>=`, `<`, and
+`<=`.
 
-Broadcasted checks for equality. `.==` will
-return `false` when encountering `missing`s.
-The same applies for `.>`, `.>=`, `.<`, and `.<=`.
+* Broadcasted comparisons: `.==`, `.>`, `.>=`, `.<`, and `.<=`.
+With `@mfalse`, all broadcasted comparisons with `missing` inside
+collections return `false`.
 
+* Control flow: `if` and `ifelse`. With `@mfalse`, `missing`
+values in `if` or `elseif` conditions are set to `false`. This
+also applies to ternary operations such as `missing == 1 ? 1 : 2`.
+Without `@mfalse`, `if-else` conditions error on missing values.
 
-`missing` values in `if` or `elseif` conditions
-are set to `false`. This also applies to ternary
-operations such as `missing == 1 ? 1 : 2`. Without
-`@mfalse`, `if-else` conditions error on missing values.
+* Short circuiting. With `@mfalse`, `missing` acts as false in
+`&&` and `||` operations. Without `@mfalse`, these comparisons
+error.
 
-`missing` acts as false in `&&` and `||` control-flow
-blocks, which error without `@mfalse`.
-
-In literal indexing operations, i.e. `y[x]`, if
-`x` is `<:AbstractVector{Union{Missing, Bool}}`
+* Indexing operations: `y[x]`. In literal indexing operations,
+i.e. `y[x]` (but not `getindex`), if `x` is `<:AbstractVector{Union{Missing, Bool}}`
 `missing` values are set to `false` and such indexes
 are not returned. Without `@mfalse` such
-operations error.
+operations error.This does not currently apply to `getindex`
+operations
+
+!!!
 
 ## Examples
 
@@ -76,12 +81,12 @@ macro mfalse(e)
 end
 
 wrap_coalesce_false(x) = :(coalesce($x, false))
-wrap_fix_missing_vec(x) = :(MissingsMacros.fix_missing_vec($x))
+wrap_fix_missing_arr(x) = :(MissingsAsFalse.fix_missing_arr($x))
 
-function fix_missing_vec(v::AbstractVector{Union{Missing, Bool}})
+function fix_missing_arr(v::AbstractArray{Union{Missing, Bool}})
     isequal.(v, true)
 end
-fix_missing_vec(v) = v
+fix_missing_arr(v) = v
 
 function mfalse_helper(e)
     t = MacroTools.postwalk(e) do x
@@ -101,7 +106,7 @@ function mfalse_helper(e)
                     a1 === :.< ||
                     a1 === :.<=)
 
-                wrap_fix_missing_vec(x)
+                wrap_fix_missing_arr(x)
             else
                 x
             end
@@ -113,7 +118,7 @@ function mfalse_helper(e)
             x.args[2] = wrap_coalesce_false(x.args[2])
             x
         elseif x.head === :ref
-            x.args[2:end] .= wrap_fix_missing_vec.(x.args[2:end])
+            x.args[2:end] .= wrap_fix_missing_arr.(x.args[2:end])
             x
         else
             x

@@ -1,4 +1,4 @@
-using MissingsMacros
+using MissingsAsFalse
 using Test
 
 @testset "scalar equality and other comparisons" begin
@@ -21,7 +21,7 @@ using Test
     @test b == false
 end
 
-@testset "vector equality and other comparisons" begin
+@testset "array equality and other comparisons" begin
     x = [1, missing]
 
     y = [1, 3]
@@ -41,6 +41,12 @@ end
 
     b = @mfalse x .<= y
     @test b == [true, false]
+
+    x = [1 missing; missing 3]
+    y = [1 2; 4 3]
+    b = @mfalse x .== y
+
+    @test b == [true false; false true]
 end
 
 @testset "if and ifelse" begin
@@ -97,6 +103,11 @@ end
 
     b = @mfalse y[xi]
     @test b == [1, 3]
+
+    y = [1 2; 3 4]
+    x = [true missing; missing true]
+    b = @mfalse y[x]
+    @test b == [1, 4]
 end
 
 @testset "&& and ||" begin
