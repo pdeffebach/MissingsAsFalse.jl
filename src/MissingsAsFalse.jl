@@ -5,7 +5,7 @@ using MacroTools
 export @mfalse
 
 """
-    mfalse(e)
+    @mfalse(e)
 
 Recursively walks through an expression and transforms
 `missing` values to `false` in select operations.
@@ -18,9 +18,10 @@ Recursively walks through an expression and transforms
 expression returns `missing`. The same holds for `>=`, `<`, and
 `<=`.
 
-* Broadcasted comparisons: `.==`, `.>`, `.>=`, `.<`, and `.<=`.
+* Broadcasted comparisons with arrays: `.==`, `.>`, `.>=`, `.<`, and `.<=`.
 With `@mfalse`, all broadcasted comparisons with `missing` inside
-collections return `false`.
+collections return `false`. `@mfalse` only applies to comparisons
+with `<:AbstractArray{Union{Missing, Bool}}`.
 
 * Control flow: `if` and `ifelse`. With `@mfalse`, `missing`
 values in `if` or `elseif` conditions are set to `false`. This
@@ -35,10 +36,8 @@ error.
 i.e. `y[x]` (but not `getindex`), if `x` is `<:AbstractVector{Union{Missing, Bool}}`
 `missing` values are set to `false` and such indexes
 are not returned. Without `@mfalse` such
-operations error.This does not currently apply to `getindex`
-operations
-
-!!!
+operations error. Note: `@mfalse` only applies when `x` is
+`<:AbstractArray{Union{Missing, Bool}}`.
 
 ## Examples
 
