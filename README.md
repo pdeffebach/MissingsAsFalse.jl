@@ -1,6 +1,5 @@
 # MissingsAsFalse.jl
 
-[![Coveralls](https://coveralls.io/repos/github/pdeffebach/MissingsAsFalse.jl/badge.svg?branch=master)](https://coveralls.io/github/pdeffebach/MissingsAsFalse.jl?branch=master)
 [![CI Testing](https://github.com/pdeffebach/MissingsAsFalse.jl/workflows/CI/badge.svg)](https://github.com/pdeffebach/MissingsAsFalse.jl/actions?query=workflow%3ACI+branch%3Amaster)
 [![](https://img.shields.io/badge/docs-stable-blue.svg)](https://pdeffebach.github.io/MissingsAsFalse.jl/stable)
 [![](https://img.shields.io/badge/docs-dev-blue.svg)](https://pdeffebach.github.io/MissingsAsFalse.jl/dev)
