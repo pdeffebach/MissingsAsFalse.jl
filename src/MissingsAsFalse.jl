@@ -69,6 +69,11 @@ julia> @mfalse if x
        end
 200
 
+julia> @mfalse map(==(true), x)
+2-element Vector{Bool}:
+ 1
+ 0
+
 julia> @mfalse (missing && true)
 false
 

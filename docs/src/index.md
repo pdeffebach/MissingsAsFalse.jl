@@ -2,7 +2,7 @@
 
 MissingsAsFalse.jl provides a single macro, `@mfalse`, which sets treats `missing` values as false in select operations. These include
 
-* Comparisons, `==`, `>`, `<`, `>=`, and `<=`, as well as their broadcasted equivalents for arrays.
+* Comparisons, `==`, `>`, `<`, `>=`, and `<=`, as well as their broadcasted equivalents for arrays and infix forms.
 * Control flow, meaning `if` and `elseif`, as well as ternary commands, `a ? b : c`
 * Short circuiting compairons, `&&` and `||`
 * Boolean indexing, `y[x]` where `x` is a boolean array which contains `missing`.
