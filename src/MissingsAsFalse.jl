@@ -8,10 +8,12 @@ export @mfalse
     @mfalse(e)
 
 Recursively walks through an expression and transforms
-`missing` values to `false` in select operations.
+`missing` values to `false` in select operations. In-fix
+`==` also returns `missing`.
 
 * Checks for equality: `==`. `@mfalse missing == 1` returns
 `false`. Without `@mfalse`, the expression returns `missing`.
+
 
 * Greater than and less than comparisons: `>`, `>=`, `<`, and
 `<=`. `missing < 1` returns `false`. Without `@mfalse` the
@@ -85,8 +87,10 @@ macro mfalse(e)
     esc(mfalse_helper(e))
 end
 
-wrap_coalesce_false(x) = :(coalesce($x, false))
-wrap_fix_missing_arr(x) = :(MissingsAsFalse.fix_missing_arr($x))
+coalesce_false(x) = coalesce(x, false)
+wrap_coalesce_false(x) = :($coalesce_false($x))
+wrap_fix_missing_arr(x) = :($fix_missing_arr($x))
+wrap_infix_false(x) = :($coalesce_false ∘ $x)
 
 function fix_missing_arr(v::AbstractArray{Union{Missing, Bool}})
     isequal.(v, true)
@@ -96,7 +100,7 @@ fix_missing_arr(v) = v
 function mfalse_helper(e)
     t = MacroTools.postwalk(e) do x
         !(x isa Expr) && return x
-        if x.head == :call
+        if x.head == :call && length(x.args) == 3
             a1 = x.args[1]
             if (a1 === :(==) ||
                 a1 === :> ||
@@ -112,6 +116,18 @@ function mfalse_helper(e)
                     a1 === :.<=)
 
                 wrap_fix_missing_arr(x)
+            else
+                x
+            end
+        elseif x.head == :call && length(x.args) == 2
+            a1 = x.args[1]
+            if (a1 === :(==) ||
+                a1 === :> ||
+                a1 === :>= ||
+                a1 === :< ||
+                a1 === :<=)
+
+                wrap_infix_false(x)
             else
                 x
             end

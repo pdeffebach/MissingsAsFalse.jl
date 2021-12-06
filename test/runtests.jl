@@ -135,3 +135,22 @@ end
     b = @mfalse (x || missing)
     @test b == false
 end
+
+@testset "infix" begin
+    x = [missing]
+
+    b = @mfalse map(==(true), x)
+    @test b == [false]
+
+    b = @mfalse map(<(100), x)
+    @test b == [false]
+
+    b = @mfalse map(<=(100), x)
+    @test b == [false]
+
+    b = @mfalse map(>(100), x)
+    @test b == [false]
+
+    b = @mfalse map(>=(100), x)
+    @test b == [false]
+end
